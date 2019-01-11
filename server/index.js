@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const serverless = require('serverless-http')
 
 const OAuthClient = require('intuit-oauth')
 const fetch = require('node-fetch')
@@ -43,42 +44,42 @@ app.get('/auth', (req, res) => {
   const id = process.env.COMPANYID
   const ver = '4'
 
-  const fetchRequest = `https://${base}/v3/company/${id}/invoice?minorversion=${ver}`
-  const options = {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      Authorization: 'Bearer ' + access_token,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      Line: [
-        {
-          Amount: 100.0,
-          DetailType: 'SalesItemLineDetail',
-          SalesItemLineDetail: {
-            ItemRef: {
-              value: '1',
-              name: 'Services'
-            }
-          }
-        }
-      ],
-      CustomerRef: {
-        value: '1'
-      }
-    })
-  }
-
-  // const fetchRequest = `https://${base}/v3/company/${id}/invoice/146?minorversion=${ver}`
+  // const fetchRequest = `https://${base}/v3/company/${id}/invoice?minorversion=${ver}`
   // const options = {
-  //   method: 'GET',
+  //   method: 'POST',
   //   headers: {
   //     Accept: 'application/json',
   //     Authorization: 'Bearer ' + access_token,
   //     'Content-Type': 'application/json'
-  //   }
+  //   },
+  //   body: JSON.stringify({
+  //     Line: [
+  //       {
+  //         Amount: 100.0,
+  //         DetailType: 'SalesItemLineDetail',
+  //         SalesItemLineDetail: {
+  //           ItemRef: {
+  //             value: '1',
+  //             name: 'Services'
+  //           }
+  //         }
+  //       }
+  //     ],
+  //     CustomerRef: {
+  //       value: '1'
+  //     }
+  //   })
   // }
+
+  const fetchRequest = `https://${base}/v3/company/${id}/invoice/146?minorversion=${ver}`
+  const options = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      Authorization: 'Bearer ' + access_token,
+      'Content-Type': 'application/json'
+    }
+  }
 
   res.header('Content-Type', 'application/json')
 
@@ -94,4 +95,5 @@ app.get('/auth', (req, res) => {
 
 app.get('/', (req, res) => res.send({ ping: 'ok', route: '/' }))
 
-app.listen(PORT, () => console.log(`We are rocking on port ${PORT}.`))
+// app.listen(PORT, () => console.log(`We are rocking on port ${PORT}.`))
+module.exports.handler = serverless(app)
